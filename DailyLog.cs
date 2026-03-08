@@ -6,10 +6,10 @@ public class DailyLog
 {
     public DateTime Date {get; set;} = DateTime.Now.Date;
 
-    public double StudyHours {get; private set;}
-    public int MonsterCount {get; private set;}
-    public int CarbsCount {get; private set;}
-    public bool GymVisited {get; private set;}
+    public double StudyHours {get; set;}
+    public int MonsterCount {get; set;}
+    public int CarbsCount {get; set;}
+    public bool GymVisited {get; set;}
 
     public double IntelligentXP => StudyHours * 100;
 
