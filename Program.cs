@@ -1,28 +1,87 @@
 ﻿using System;
-using System.Text.Json;
 using Spectre.Console;
+using LifeTracker;
 
-AnsiConsole.MarkupLine("[bold orange1]LOL HELLO[/]");
+// Loading stats file from system
+var currentData = DataService.Load();
 
-AnsiConsole.Write(new Rule("[bold red]ERROR[/]").RuleStyle("grey").LeftJustified());
-AnsiConsole.Write(new Rule().RuleStyle("grey")); // Просто лінія
+bool isRunning = true;
 
-var quote = new Panel("No longer human, but becoming a machine.")
+while(isRunning)
 {
-    Border = BoxBorder.Rounded,
-    Padding = new Padding(1, 1, 1, 1),
-    Header = new PanelHeader("[yellow] The Oracle [/]")
-};
+    AnsiConsole.Clear();
 
-AnsiConsole.Write(quote);
+    ShowTable(currentData);
 
-var table = new Table().Border(TableBorder.Square).BorderColor(Color.Orange1);
+    var choice = AnsiConsole.Prompt(
+    new SelectionPrompt<string>()
+    .Title("What do you wanna do?")
+    .AddChoices("Add study hours", "Add Monster", "Add carbs", "Gym session", "Exit")
+    );
 
-table.AddColumn("[grey]Stat[/]");
-table.AddColumn("[grey]Value[/]");
+    switch (choice)
+    {
+        case "Add study hours":
+            int hoursToAdd = AnsiConsole.Ask<int>("So how much do you studied?");
+            currentData.AddStudyTime(hoursToAdd);
+            break;
 
-table.AddRow("Intelligence", "[cyan]500 XP[/]");
-table.AddRow("Carbohydrates", "[green]450g[/] [grey](Optimal)[/]");
-table.AddRow("Monsters", "[bold red]4 CANS (OVERDRIVE)[/]");
+        case "Add Monster":
+            var MonsterCount = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("You sure that you wanna add another can for today?")
+                .AddChoices("Yes", "No")
+                );
 
-AnsiConsole.Write(new Align(table, HorizontalAlignment.Center));
+            if (MonsterCount == "Yes")
+            {
+                currentData.AddMonster();
+            }
+            break;
+
+        case "Add carbs":
+            int carbsToAdd = AnsiConsole.Ask<int>("So how much carbs you eaten?");
+            currentData.AddCarbs(carbsToAdd);
+            break;
+
+        case "Gym session":
+            var isGymVisited = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("So you visited dym today?")
+                .AddChoices("Yes", "No, thats why i stall small.")
+                );
+
+            if (isGymVisited == "Yes")
+            {
+                currentData.SetGymStatus(true);
+            }
+            else
+            {
+                currentData.SetGymStatus(false);
+            }
+            break;
+        
+        case "Exit":
+            isRunning = false;
+            AnsiConsole.Clear();
+            break;
+    }
+
+    DataService.Save(currentData);
+}
+
+static void ShowTable(DailyLog data)
+{
+    var statsTable = new Table().Border(TableBorder.Square).BorderColor(Color.Orange1);
+
+    statsTable.AddColumn("[grey]Stat[/]");
+    statsTable.AddColumn("[grey]Value[/]");
+
+    statsTable.AddRow("Intelligence", $"[cyan]{data.IntelligentXP} XP[/]");
+    statsTable.AddRow("Carbohydrates", $"[green]{data.CarbsCount} / 500g[/]");
+    statsTable.AddRow("Monsters", $"[bold red]{data.MonsterCount} CANS[/]");
+    statsTable.AddRow("Gym", $"[bold red]{data.GymVisited}[/]");
+
+    AnsiConsole.Write(new Align(statsTable, HorizontalAlignment.Center));
+}
+
