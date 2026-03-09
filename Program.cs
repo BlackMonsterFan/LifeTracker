@@ -1,9 +1,18 @@
 ﻿using System;
 using Spectre.Console;
 using LifeTracker;
+using System.ComponentModel;
+using Microsoft.VisualBasic;
 
-// Loading stats file from system
-var currentData = DataService.Load();
+var settingService = new SettingsService();
+var dataService = new DataService();
+
+// loading stats and settings files from system
+var currentLog = dataService.Load();
+var setting = settingService.Load();
+
+// creating controller
+var controller = new AppController(currentLog, setting, dataService, settingService);
 
 bool isRunning = true;
 
@@ -11,63 +20,15 @@ while(isRunning)
 {
     AnsiConsole.Clear();
 
-    ShowTable(currentData);
+    // ShowTable(currentData);
 
     var choice = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
     .Title("What do you wanna do?")
-    .AddChoices("Add study hours", "Add Monster", "Add carbs", "Gym session", "Exit")
+    .AddChoices("Add values", "Settings", "Exit")
     );
 
-    switch (choice)
-    {
-        case "Add study hours":
-            int hoursToAdd = AnsiConsole.Ask<int>("So how much do you studied?");
-            currentData.AddStudyTime(hoursToAdd);
-            break;
-
-        case "Add Monster":
-            var MonsterCount = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("You sure that you wanna add another can for today?")
-                .AddChoices("Yes", "No")
-                );
-
-            if (MonsterCount == "Yes")
-            {
-                currentData.AddMonster();
-            }
-            break;
-
-        case "Add carbs":
-            int carbsToAdd = AnsiConsole.Ask<int>("So how much carbs you eaten?");
-            currentData.AddCarbs(carbsToAdd);
-            break;
-
-        case "Gym session":
-            var isGymVisited = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("So you visited dym today?")
-                .AddChoices("Yes", "No, thats why i stall small.")
-                );
-
-            if (isGymVisited == "Yes")
-            {
-                currentData.SetGymStatus(true);
-            }
-            else
-            {
-                currentData.SetGymStatus(false);
-            }
-            break;
-        
-        case "Exit":
-            isRunning = false;
-            AnsiConsole.Clear();
-            break;
-    }
-
-    DataService.Save(currentData);
+    controller.ChoiceHandler(choice);
 }
 
 static void ShowTable(DailyLog data)
@@ -77,11 +38,16 @@ static void ShowTable(DailyLog data)
     statsTable.AddColumn("[grey]Stat[/]");
     statsTable.AddColumn("[grey]Value[/]");
 
-    statsTable.AddRow("Intelligence", $"[cyan]{data.IntelligentXP} XP[/]");
-    statsTable.AddRow("Carbohydrates", $"[green]{data.CarbsCount} / 500g[/]");
-    statsTable.AddRow("Monsters", $"[bold red]{data.MonsterCount} CANS[/]");
-    statsTable.AddRow("Gym", $"[bold red]{data.GymVisited}[/]");
 
     AnsiConsole.Write(new Align(statsTable, HorizontalAlignment.Center));
 }
 
+// if (settingsChoice == "Add new stat")
+//             {
+//                 var key = AnsiConsole.Ask<string>("Name for the stat?");
+//                 var weight = AnsiConsole.Ask<double>("How much XP it gives?");
+
+//                 currentData.UpdateStat(key, 0);
+//                 currentSetting.UpdateWeight(key, weight);
+//                 SettingService.SaveSettings(currentSetting);
+//             }
