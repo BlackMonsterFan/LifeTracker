@@ -38,7 +38,7 @@ static void ShowTable(DailyLog data)
     statsTable.AddColumn("[grey]Stat[/]");
     statsTable.AddColumn("[grey]Value[/]");
 
-
+ 
     AnsiConsole.Write(new Align(statsTable, HorizontalAlignment.Center));
 }
 
