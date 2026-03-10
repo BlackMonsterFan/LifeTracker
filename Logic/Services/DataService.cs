@@ -19,7 +19,16 @@ public class DataService
 
         if (!File.Exists(fileName))
         {
-            return new DailyLog();
+            var settingService = new SettingsService();
+            var settings = settingService.Load();
+            DailyLog dailyLog = new DailyLog();
+
+            foreach (string k in settings.Weights.Keys)
+            {
+                dailyLog.UpdateStat(k, 0);
+            }
+
+            return dailyLog;
         }
 
         string json = File.ReadAllText(fileName);

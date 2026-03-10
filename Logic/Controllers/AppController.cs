@@ -16,7 +16,7 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
                 var settingsChoice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("What do you wanna set up?")
-                .AddChoices("Add new stats", "Edit stats", "Delete stats", "Exit")
+                .AddChoices("Create new stats", "Edit stats", "Delete stats", "Exit")
                 );
 
                 SettingHandler(settingsChoice);
@@ -24,8 +24,8 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
                 break;
         
                 case "Exit":
-                Environment.Exit(0);
                 AnsiConsole.Clear();
+                Environment.Exit(0);
                 break;
         }
     }
@@ -34,12 +34,16 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
     {
         switch (choice)
         {
-            case "Add new stats":
+            case "Create new stats":
                 AddNewStat();
                 break;
 
             case "Edit stats":
                 EditStat();
+                break;
+
+            case "Delete stats":
+                DeleteStat();
                 break;
 
             case "Exit":
@@ -107,10 +111,29 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
                     break;
             }
         }
+    }
 
-        // currentLog.UpdateStat(key, 0);
-        // settings.UpdateWeight(key, weight);
-        // dataService.Save(currentLog);
-        // settingService.Save(settings);
+    public void DeleteStat()
+    {
+        var key = AnsiConsole.Prompt(
+        new SelectionPrompt<string>()
+        .Title("Choose stat to delete:")
+        .AddChoices(currentLog.Stats.Keys)
+        .AddChoices("Exit")
+        );
+
+        if (key != "Exit")
+        {
+            bool confirm = AnsiConsole.Confirm("Are you sure?");
+
+            if(confirm)
+            {
+                currentLog.Stats.Remove(key);
+                settings.Weights.Remove(key);
+
+                dataService.Save(currentLog);
+                settingService.Save(settings);
+            }
+        }
     }
 }
