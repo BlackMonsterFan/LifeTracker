@@ -58,7 +58,7 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
         double weight = AnsiConsole.Ask<double>("How much XP it gives?");
 
         currentLog.UpdateStat(key, 0);
-        settings.UpdateWeight(key, weight);
+        settings.Update(key, weight);
         dataService.Save(currentLog);
         settingService.Save(settings);
     }
@@ -88,9 +88,13 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
 
                     if (confirmName)
                     {
-                        currentLog.Stats.Remove(key, out double quantity);
-                        currentLog.UpdateStat(newName, quantity);
+                        currentLog.Stats.Remove(key, out double statQuantity);
+                        currentLog.UpdateStat(newName, statQuantity);
                         dataService.Save(currentLog);
+
+                        settings.Weights.Remove(key, out double weightQuantity);
+                        settings.Update(newName, weightQuantity);
+                        settingService.Save(settings);
 
                     }else break; 
                     break;
@@ -101,7 +105,7 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
 
                     if (confirmValue)
                     {
-                        settings.UpdateWeight(key, newValue);
+                        settings.Update(key, newValue);
                         settingService.Save(settings);
 
                     }else break; 

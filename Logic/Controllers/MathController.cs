@@ -5,24 +5,33 @@ namespace LifeTracker;
 
 public class MathController
 {
-    public static Dictionary<string, double> TotalXp(UserSettings settings)
+    public static Dictionary<string, double> CalculateTotals(UserSettings settings)
     {
         string[] filePaths = Directory.GetFiles($"Data/Logs");
 
-        var xp = filePaths
+        var logs = filePaths
         .Select(file => JsonSerializer.Deserialize<DailyLog>(File.ReadAllText(file)))
-        .Where(log => log != null && log.Stats.Keys == settings.Weights.Keys)
-        .Sum();
+        .Where(log => log != null);
 
-
-        var TotalXp = new Dictionary<string, double>();
+        var Totals = new Dictionary<string, double>();
 
         foreach (string k in settings.Weights.Keys)
         {
-            
+            Totals[k] = 0;   
         }
 
-        return TotalXp;
+        foreach (var log in logs)
+        {
+            foreach (var stat in log.Stats)
+            {
+                if (Totals.ContainsKey(stat.Key))
+                {
+                    Totals[stat.Key] += stat.Value;
+                }
+            }
+        }
+
+        return Totals;
     }
 }
 

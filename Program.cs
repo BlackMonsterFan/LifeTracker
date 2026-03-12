@@ -21,7 +21,7 @@ while(true)
     AnsiConsole.Clear();
 
     // ShowTable(currentData);
-    ui.ShowStatsTable(currentLog);
+    ui.ShowStatsTable(currentLog, setting);
 
     var choice = AnsiConsole.Prompt(
     new SelectionPrompt<string>()

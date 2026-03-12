@@ -4,8 +4,9 @@ public class UserSettings
 {
     public Dictionary<string, double> Weights { get; set; } = new();
 
-    public void UpdateWeight(string key, double weight)
+    public void Update(string key, double weight)
     {
-        Weights[key] = weight;
+        Weights[key] = weight; 
     }
+
 }
