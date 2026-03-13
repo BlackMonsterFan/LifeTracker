@@ -10,12 +10,12 @@ public class UiController
         statsTable.AddColumn("[grey]Stat[/]");
         statsTable.AddColumn("[grey]Value[/]");
 
-        var test = MathController.CalculateTotals(settings);
+        var totalsXp = DataCollectionService.CalculateTotalsXP(settings);
 
-        foreach (var k in test)
+        foreach (var totalXp in totalsXp)
         {
             
-            statsTable.AddRow(k.Key, k.Value.ToString());
+            statsTable.AddRow(totalXp.Key, $"{LevelUpSystem.GetLevel(totalXp.Value).ToString()} ----- {(LevelUpSystem.GetLevel(totalXp.Value) +1).ToString()}");
         }
  
         AnsiConsole.Write(new Align(statsTable, HorizontalAlignment.Center));

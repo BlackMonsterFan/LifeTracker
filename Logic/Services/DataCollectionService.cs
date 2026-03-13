@@ -1,9 +1,8 @@
-using System.IO;
 using System.Text.Json;
 
 namespace LifeTracker;
 
-public class MathController
+public class DataCollectionService
 {
     public static Dictionary<string, double> CalculateTotals(UserSettings settings)
     {
@@ -33,6 +32,16 @@ public class MathController
 
         return Totals;
     }
-}
 
-// знайти всі шляхи - пропарсити з джсон в дейлілог - підсумувати (всі значення які є в налаштуваннях) - 
+    public static Dictionary<string, double> CalculateTotalsXP(UserSettings settings)
+    {
+        var totals = CalculateTotals(settings);
+
+        foreach(var stat in totals)
+        {
+            totals[stat.Key] = stat.Value * settings.Weights[stat.Key];
+        }
+
+        return totals;
+    }
+}
