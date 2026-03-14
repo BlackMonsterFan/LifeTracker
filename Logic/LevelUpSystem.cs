@@ -15,13 +15,4 @@ public static class LevelUpSystem{
         if (level <= 1) return 0;
         return BaseXp * Math.Pow(level - 1, Exponent);
     }
-
-    // public static double GetCurrentProgress(double totalXp)
-    // {
-    //     int currentLevel = GetLevel(totalXp);
-    //     double currentLevelTrashHold = GetXpRequirement(currentLevel);
-    //     double nextLevelTrashHold = GetXpRequirement(currentLevel + 1);
-
-
-    // }
 }

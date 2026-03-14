@@ -1,8 +1,6 @@
 ﻿using System;
 using Spectre.Console;
 using LifeTracker;
-using System.ComponentModel;
-using Microsoft.VisualBasic;
 
 var settingService = new SettingsService();
 var dataService = new DataService();
@@ -12,22 +10,17 @@ var currentLog = dataService.Load();
 var setting = settingService.Load();
 
 // loading controllers
-var controller = new AppController(currentLog, setting, dataService, settingService);
-var ui = new UiController();
-
+var UiController = new UiController();
+var controller = new AppController(currentLog, setting, dataService, settingService, UiController);
 
 while(true)
 {
     AnsiConsole.Clear();
-
-    // ShowTable(currentData);
-    ui.ShowStatsTable(currentLog, setting);
-
-    var choice = AnsiConsole.Prompt(
-    new SelectionPrompt<string>()
-    .Title("What do you wanna do?")
-    .AddChoices("Add values", "Settings", "Exit")
-    );
+    
+    var choice = controller.ShowMainMenu();
 
     controller.ChoiceHandler(choice);
+
+    
+
 }
