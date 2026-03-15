@@ -17,7 +17,7 @@ public class UiController
         var totalsXp = DataCollectionService.CalculateTotalsXP(settings);
         double total = totalsXp.Values.Sum();
 
-        var table = new Table().Border(TableBorder.Square).BorderColor(Color.Orange1);
+        var table = new Table().Border(TableBorder.Square).BorderColor(Color.Gray);
 
         table.AddColumn($"[bold]Your totals: [/]");
         table.AddColumn($"[white]{total}Xp[/]", col => col.Centered());

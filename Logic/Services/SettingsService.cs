@@ -5,7 +5,7 @@ public class SettingsService
 {
     public void Save(UserSettings settings)
     {
-        string fileName = $"Data/Settings.json";
+        string fileName = FileSystemConfig.SettingsPath;
         var options = new JsonSerializerOptions { WriteIndented = true };
         string json = JsonSerializer.Serialize(settings, options);
         File.WriteAllText(fileName, json);
@@ -13,7 +13,7 @@ public class SettingsService
 
     public UserSettings Load()
     {
-        string fileName = $"Data/Settings.json";
+        string fileName = FileSystemConfig.SettingsPath;
 
         if (!File.Exists(fileName))
         {

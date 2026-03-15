@@ -27,12 +27,12 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
                 .ApplySystemStyle("Оберіть опцію:")
                 .AddChoices(Enum.GetValues<MenuOption>())
                 .UseConverter(option => option switch {
-                    MenuOption.Add => "󰐕 Додати значення",
-                    MenuOption.Delete => "󰆴 Видалити значення",
+                    MenuOption.Add      => "➕ Додати прогрес",
+                    MenuOption.Delete   => "🗑️ Видалити запис",
                     MenuOption.Settings => "⚙️ Налаштування",
-                    MenuOption.Exit => "󰈆 Вихід",
+                    MenuOption.Exit     => "🚪 Вихід",
                     _ => option.ToString()
-                }));
+                    }));
 
         return choice;
     }
@@ -53,7 +53,7 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
                 var settingsChoice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .ApplySystemStyle("Оберіть опцію:")
-                .AddChoices("Створити нову статистику", "Відредагувати статистику", "Видалити статистику", "[bold]󰈆 Вихід[/]")
+                .AddChoices("Створити нову статистику", "Відредагувати статистику", "Видалити статистику", "[bold]🚪 Вихід[/]")
                 );
 
                 SettingHandler(settingsChoice);
@@ -73,10 +73,10 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
             new SelectionPrompt<string>()
                 .ApplySystemStyle("[bold orange1] Записати в: [/]")
                 .AddChoices(currentLog.Stats.Keys)
-                .AddChoices("[bold]󰈆 Вихід[/]")
+                .AddChoices("[bold]🚪 Вихід[/]")
         );
 
-        if (key != "󰈆 Вихід")
+        if (key != "[bold]🚪 Вихід[/]")
         {
             AddValue(key);
         }
@@ -96,10 +96,10 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
             new SelectionPrompt<string>()
                 .ApplySystemStyle("[bold orange1] Видалити з: [/]")
                 .AddChoices(currentLog.Stats.Keys)
-                .AddChoices("[bold]󰈆 Вихід[/]")
+                .AddChoices("[bold]🚪 Вихід[/]")
         );
 
-        if (key != "󰈆 Вихід")
+        if (key != "[bold]🚪 Вихід[/]")
         {
             DeleteValue(key);
         }
@@ -129,7 +129,7 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
                 DeleteStat();
                 break;
 
-            case "[bold]󰈆 Вихід[/]":
+            case "[bold]🚪 Вихід[/]":
                 AnsiConsole.Clear();
                 break;
         }
@@ -137,8 +137,8 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
 
     public void AddNewStat()
     {
-        string key = AnsiConsole.Ask<string>("[bold orange1]Name for the stat?[/]");
-        double weight = AnsiConsole.Ask<double>("[bold orange1]How much XP it gives?[/]");
+        string key = AnsiConsole.Ask<string>("[bold orange1]Ім'я статистики: [/]");
+        double weight = AnsiConsole.Ask<double>("[bold orange1]Ціна за одинцю в Xp: [/]");
 
         currentLog.UpdateStat(key, 0);
         settings.Update(key, weight);
@@ -152,15 +152,15 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
         new SelectionPrompt<string>()
         .ApplySystemStyle("Оберіть що відредагувати:")
         .AddChoices(currentLog.Stats.Keys)
-        .AddChoices("[bold]󰈆 Вихід[/]")
+        .AddChoices("[bold]🚪 Вихід[/]")
         );
 
-        if (key != "[bold]󰈆 Вихід[/]")
+        if (key != "[bold]🚪 Вихід[/]")
         {
             var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
             .ApplySystemStyle("Оберіть що змінити:")
-            .AddChoices("Ім'я", "XP ціну", "[bold]󰈆 Вихід[/]")
+            .AddChoices("Ім'я", "XP ціну", "[bold]🚪 Вихід[/]")
             );
 
             switch (choice)
@@ -194,7 +194,7 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
                     }else break; 
                     break;
 
-                case "[bold]󰈆 Вихід[/]":
+                case "[bold]🚪 Вихід[/]":
                     break;
             }
         }
@@ -206,10 +206,10 @@ public class AppController(DailyLog currentLog, UserSettings settings, DataServi
         new SelectionPrompt<string>()
         .ApplySystemStyle("Оберіть що видалити:")
         .AddChoices(currentLog.Stats.Keys)
-        .AddChoices("[bold]󰈆 Вихід[/]")
+        .AddChoices("[bold]🚪 Вихід[/]")
         );
 
-        if (key != "[bold]󰈆 Вихід[/]")
+        if (key != "[bold]🚪 Вихід[/]")
         {
             bool confirm = AnsiConsole.Confirm("[bold]Підтвердіть видалення:[/]");
 

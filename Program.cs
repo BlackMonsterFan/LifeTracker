@@ -2,6 +2,8 @@
 using Spectre.Console;
 using LifeTracker;
 
+FileSystemConfig.EnsureDirectoriesCreated();
+
 var settingService = new SettingsService();
 var dataService = new DataService();
 

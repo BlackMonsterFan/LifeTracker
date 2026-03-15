@@ -6,7 +6,7 @@ public class DataCollectionService
 {
     public static Dictionary<string, double> CalculateTotals(UserSettings settings)
     {
-        string[] filePaths = Directory.GetFiles($"Data/Logs");
+        string[] filePaths = Directory.GetFiles(FileSystemConfig.LogsPath);
 
         var logs = filePaths
         .Select(file => JsonSerializer.Deserialize<DailyLog>(File.ReadAllText(file)))

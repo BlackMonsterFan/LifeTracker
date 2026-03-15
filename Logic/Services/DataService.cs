@@ -7,7 +7,8 @@ public class DataService
 {
     public void Save(DailyLog log)
     {
-        string fileName = $"Data/Logs/{DateTime.Now:yyyy-MM-dd}.json";
+        string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+        string fileName = Path.Combine(FileSystemConfig.LogsPath, $"{currentDate}.json");
         var options = new JsonSerializerOptions { WriteIndented = true };
         string json = JsonSerializer.Serialize(log, options);
         File.WriteAllText(fileName, json);
@@ -15,7 +16,8 @@ public class DataService
 
     public DailyLog Load()
     {
-        string fileName = $"Data/Logs/{DateTime.Now:yyyy-MM-dd}.json";
+        string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+        string fileName = Path.Combine(FileSystemConfig.LogsPath, $"{currentDate}.json");
 
         if (!File.Exists(fileName))
         {
