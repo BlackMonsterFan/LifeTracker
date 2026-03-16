@@ -1,5 +1,8 @@
 using System.Text.Json;
-namespace LifeTracker;
+using LifeTracker.Abstractions;
+using LifeTracker.Models;
+using LifeTracker.Utils;
+namespace LifeTracker.Services;
 
 public class DataService : IDataService
 {

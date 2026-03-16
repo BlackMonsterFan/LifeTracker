@@ -1,4 +1,5 @@
-namespace LifeTracker;
+using LifeTracker.Abstractions;
+namespace LifeTracker.Services;
 
 public class StatsService(IDataService data, ISettingsService settingsData, IDailyLogProvider logProvider) : IStatsService
 {

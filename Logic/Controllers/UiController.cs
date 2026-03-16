@@ -1,6 +1,7 @@
 using LifeTracker.Models;
 using Spectre.Console;
-namespace LifeTracker;
+
+namespace LifeTracker.Logic;
 
 public class UiController
 {
@@ -31,6 +32,11 @@ public class UiController
         var bar = new string('━', filled);
         var empty = new string('━', width - filled - 1);
         return $"[orange1]{bar}[/][white]╸[/][grey23]{empty}[/]";
+    }
+
+    public void Clear()
+    {
+        AnsiConsole.Clear();
     }
 }
 

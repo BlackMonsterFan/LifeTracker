@@ -1,6 +1,10 @@
 using Spectre.Console;
+using LifeTracker.Abstractions;
+using LifeTracker.Logic;
+using LifeTracker.Utils;
 
-namespace LifeTracker;
+
+namespace LifeTracker.Services;
 
 public class InputService : IInputService
 {

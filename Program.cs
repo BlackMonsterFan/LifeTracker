@@ -1,6 +1,7 @@
-﻿using Spectre.Console;
-using LifeTracker;
-using LifeTracker.Services;
+﻿using LifeTracker.Services;
+using LifeTracker.Logic;
+using LifeTracker.Utils;
+
 
 // Checking if directory exists
 FileSystemConfig.EnsureDirectoriesCreated();
@@ -27,6 +28,5 @@ var controller = new AppController(inputService, statsService, UiController, sta
 
 while(true)
 {
-    AnsiConsole.Clear();
     controller.MainMenu();
 }

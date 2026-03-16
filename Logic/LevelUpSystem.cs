@@ -1,7 +1,5 @@
 using LifeTracker.Abstractions;
-using LifeTracker.Models;
-
-namespace LifeTracker;
+namespace LifeTracker.Logic;
 
 public class LevelUpSystem : ILevelUpSystem
 {

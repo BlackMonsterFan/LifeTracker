@@ -1,4 +1,8 @@
-namespace LifeTracker;
+using LifeTracker.Models;
+using LifeTracker.Abstractions;
+
+namespace LifeTracker.Utils;
+
 
 public class DailyLogProvider(IDataService data, ISettingsService settingsData) : IDailyLogProvider
 {

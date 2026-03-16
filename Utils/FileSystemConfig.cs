@@ -1,3 +1,5 @@
+namespace LifeTracker.Utils;
+
 public static class FileSystemConfig
 {
     private static readonly string BasePath = AppContext.BaseDirectory;

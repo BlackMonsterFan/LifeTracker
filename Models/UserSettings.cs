@@ -1,4 +1,4 @@
-namespace LifeTracker;
+namespace LifeTracker.Models;
 
 public class UserSettings
 {

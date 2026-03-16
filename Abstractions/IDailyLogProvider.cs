@@ -1,4 +1,6 @@
-namespace LifeTracker;
+using LifeTracker.Models;
+
+namespace LifeTracker.Abstractions;
 
 public interface IDailyLogProvider
 {

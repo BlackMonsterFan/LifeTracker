@@ -1,6 +1,6 @@
 using LifeTracker.Abstractions;
 
-namespace LifeTracker;
+namespace LifeTracker.Logic;
 
 public class AppController(IInputService inputService, IStatsService statsService, UiController ui, IStatsPresentationService statsPresentationService)
 {
@@ -11,6 +11,8 @@ public class AppController(IInputService inputService, IStatsService statsServic
 
         var choice = inputService.GetChoice<MenuOption>("Оберіть опцію:");
         ChoiceHandler(choice);
+
+        ui.Clear();
     }
 
     public void ChoiceHandler(MenuOption choice)

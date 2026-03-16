@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace LifeTracker;
+namespace LifeTracker.Abstractions;
 
 public enum MenuOption
 {

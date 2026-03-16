@@ -1,4 +1,4 @@
-namespace LifeTracker;
+namespace LifeTracker.Abstractions;
 
 public interface IInputService
 {

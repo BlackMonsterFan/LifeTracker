@@ -1,4 +1,4 @@
-namespace LifeTracker;
+namespace LifeTracker.Utils;
 
 public static class EnumExtensions
 {

@@ -1,6 +1,4 @@
-using System;
-
-namespace LifeTracker;
+namespace LifeTracker.Models;
 
 public class DailyLog
 {

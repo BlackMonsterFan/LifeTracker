@@ -1,4 +1,5 @@
-namespace LifeTracker;
+using LifeTracker.Abstractions;
+namespace LifeTracker.Services;
 
 public class LogCollectingService(IDataService data, ISettingsService settingsService) : ILogCollectingService
 {
