@@ -1,43 +1,36 @@
+using LifeTracker.Models;
 using Spectre.Console;
-using System.Text;
 namespace LifeTracker;
 
 public class UiController
 {
-    public void ShowStatsTable(DailyLog log, UserSettings settings)
+    public void ShowStatsTable(IEnumerable<StatInfo> stats)
     {
-        string GetBar(double progress, int width = 30)
-        {
-            int filled = (int)(progress * width);
-            var bar = new string('━', filled);
-            var empty = new string('━', width - filled - 1);
-            return $"[orange1]{bar}[/][white]╸[/][grey23]{empty}[/]";
-        }
-
-        var totalsXp = DataCollectionService.CalculateTotalsXP(settings);
-        double total = totalsXp.Values.Sum();
-
         var table = new Table().Border(TableBorder.Square).BorderColor(Color.Gray);
 
         table.AddColumn($"[bold]Your totals: [/]");
-        table.AddColumn($"[white]{total}Xp[/]", col => col.Centered());
+        table.AddColumn($"[white]{10}Xp[/]", col => col.Centered());
 
-        foreach (var totalXp in totalsXp)
+        foreach (var stat in stats)
         {
-            int level = LevelUpSystem.GetLevel(totalXp.Value);
-            double neededXp = LevelUpSystem.GetXpRequirement(level + 1);
-
-            double progress = totalXp.Value / neededXp;
-
             table.AddRow(
-                new Rows(new Markup($"[bold]{totalXp.Key}[/]"), new Markup($"[dim]current lvl:[/] [orange1]{level}[/]")),
-                new Rows(new Markup($"{Math.Round(totalXp.Value)} / {Math.Round(neededXp)}"), new Markup(GetBar(progress)))
+                new Rows(new Markup($"[bold]{stat.Name}[/]"), new Markup($"[dim]current lvl:[/] [orange1]{stat.Level}[/]")),
+                new Rows(new Markup($"{Math.Round(stat.CurrentXp)} / {Math.Round(stat.NeededXp)}"), new Markup(GetBar(stat.Progress)))
             );
 
             table.AddEmptyRow();
         }
  
         AnsiConsole.Write(new Align(table, HorizontalAlignment.Center));
+    }
+
+    public string GetBar(double progress)
+    {
+        int width = 30;
+        int filled = (int)(progress * width);
+        var bar = new string('━', filled);
+        var empty = new string('━', width - filled - 1);
+        return $"[orange1]{bar}[/][white]╸[/][grey23]{empty}[/]";
     }
 }
 

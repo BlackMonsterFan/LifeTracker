@@ -1,28 +1,32 @@
-﻿using System;
-using Spectre.Console;
+﻿using Spectre.Console;
 using LifeTracker;
+using LifeTracker.Services;
 
+// Checking if directory exists
 FileSystemConfig.EnsureDirectoriesCreated();
 
+// Data services
 var settingService = new SettingsService();
 var dataService = new DataService();
+var logCollectingService = new LogCollectingService(dataService, settingService);
 
-// loading stats and settings files from system
-var currentLog = dataService.Load();
+var levelUpSystem = new LevelUpSystem();
+var logProvider = new DailyLogProvider(dataService, settingService);
+var statsPresentationService = new StatsPresentationService(logCollectingService, settingService, levelUpSystem);
+
+// loading log and settings files from system
+var log = dataService.Load(DateTime.Now.ToString());
 var setting = settingService.Load();
+
+var inputService = new InputService();
+var statsService = new StatsService(dataService, settingService, logProvider);
 
 // loading controllers
 var UiController = new UiController();
-var controller = new AppController(currentLog, setting, dataService, settingService, UiController);
+var controller = new AppController(inputService, statsService, UiController, statsPresentationService);
 
 while(true)
 {
     AnsiConsole.Clear();
-    
-    var choice = controller.ShowMainMenu();
-
-    controller.ChoiceHandler(choice);
-
-    
-
+    controller.MainMenu();
 }

@@ -1,16 +1,26 @@
+using LifeTracker.Abstractions;
+using LifeTracker.Models;
+
 namespace LifeTracker;
 
-public static class LevelUpSystem{
-
+public class LevelUpSystem : ILevelUpSystem
+{
     private const int BaseXp = 500;
     private const double Exponent = 1.4;
 
-    public static int GetLevel(double totalXp)
+    public double CalculateXp(double value, double weight)
     {
-        return (int)Math.Pow(totalXp / BaseXp, 1 / Exponent) + 1;
+        return value * weight;
     }
 
-    public static double GetXpRequirement(int level)
+    public int GetLevel(double Xp)
+    {
+        if (Xp <= 0) return 1;
+
+        return (int)Math.Pow(Xp / BaseXp, 1 / Exponent) + 1;
+    }
+
+    public double GetXpRequirement(int level)
     {
         if (level <= 1) return 0;
         return BaseXp * Math.Pow(level - 1, Exponent);
