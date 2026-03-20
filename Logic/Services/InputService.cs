@@ -22,15 +22,26 @@ public class InputService : IInputService
 
     public int AskInt(string prompt)
     {
-        int number = AnsiConsole.Ask<int>(prompt);
-
-        return number;
+        return AnsiConsole.Prompt(
+        new TextPrompt<int>(prompt)
+            .ValidationErrorMessage($"[red]Помилка:[/] Число має бути не менше {0}!")
+            .Validate(value => value >= 0 
+                ? ValidationResult.Success() 
+                : ValidationResult.Error())
+        );
     }
 
     public (string, double) GetNewStatDetails()
     {
         string name = AnsiConsole.Ask<string>("[bold orange1]Ім'я статистики: [/]");
-        double weight = AnsiConsole.Ask<double>("[bold orange1]Ціна за одинцю в Xp: [/]");
+
+        double weight = AnsiConsole.Prompt(
+            new TextPrompt<double>("[bold orange1]Ціна за одинцю в Xp: [/]")
+            .ValidationErrorMessage($"[red]Помилка:[/] Число має бути не менше {0}!")
+            .Validate(value => value > 0
+                ? ValidationResult.Success() 
+                : ValidationResult.Error())
+        );
 
         return (name, weight);
     }
@@ -41,10 +52,10 @@ public class InputService : IInputService
         new SelectionPrompt<string>()
         .ApplySystemStyle(title)
         .AddChoices(choices)
-        .AddChoices("[bold]🚪 Вихід[/]")
+        .AddChoices("[bold]Вихід[/]")
         );
 
-        if (choice == "[bold]🚪 Вихід[/]") return "Вихід";
+        if (choice == "[bold]Вихід[/]") return "Вихід";
         return choice;
     }
 
