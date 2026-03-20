@@ -13,7 +13,7 @@ public class DataService : IDataService
         if (!File.Exists(fileName)) return null;
 
         string json = File.ReadAllText(fileName);
-        return JsonSerializer.Deserialize<DailyLog>(json) ?? new DailyLog();
+        return JsonSerializer.Deserialize<DailyLog>(json);
     }
 
     public IEnumerable<DailyLog> LoadAll()

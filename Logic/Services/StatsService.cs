@@ -1,50 +1,56 @@
 using LifeTracker.Abstractions;
+using LifeTracker.Models;
 namespace LifeTracker.Services;
 
 public class StatsService(IDataService data, ISettingsService settingsData, IDailyLogProvider logProvider) : IStatsService
 {
-    public void AddProgress(string key, double amount)
+    public void AddProgress(Guid id, double amount)
     {
         var log = logProvider.GetOrInitialize(DateTime.Now);
 
-        log.Stats[key] += amount;
+        log.DailyStats[id] += amount;
 
         data.Save(log);
     }
 
-    public void RemoveStat(string key)
+    public void RemoveStat(Guid id)
     {
         var log = logProvider.GetOrInitialize(DateTime.Now);
         var settings = settingsData.Load();
 
-        log.Stats.Remove(key);
-        settings.Weights.Remove(key);
+        log.DailyStats.Remove(id);
 
-        data.Save(log);
-        settingsData.Save(settings);
-    }
-
-    public void RenameStat(string oldName, string newName)
-    {
-        var log = logProvider.GetOrInitialize(DateTime.Now);
-        var settings = settingsData.Load();
-
-        log.Stats.Remove(oldName, out double value);
-        settings.Weights.Remove(oldName, out double weight);
-
-        log.Stats[newName] = value;
-        settings.Weights[newName] = weight;
+        settings.Stats.Remove(settings.Stats.Find(statDef => statDef.Id == id));
 
         data.Save(log);
         settingsData.Save(settings);
     }
 
-    public void UpdateWeight(string key, double weight)
+    public void RenameStat(Guid id, string newName)
     {
-        var log = logProvider.GetOrInitialize(DateTime.Now);
         var settings = settingsData.Load();
 
-        settings.Weights[key] = weight;
+        var index = settings.Stats.FindIndex(statDef => statDef.Id == id);
+
+        if (index != -1)
+        {
+            settings.Stats[index] = settings.Stats[index] with {Name = newName};
+        }
+
+        settingsData.Save(settings);
+    }
+
+    public void UpdateWeight(Guid id, double weight)
+    {
+        var settings = settingsData.Load();
+
+        int index = settings.Stats.FindIndex(statDef => statDef.Id == id);
+
+        if (index != -1)
+        {
+            settings.Stats[index] = settings.Stats[index] with {Weight = weight};
+        }
+
         settingsData.Save(settings);
     }
 
@@ -53,23 +59,38 @@ public class StatsService(IDataService data, ISettingsService settingsData, IDai
         var log = logProvider.GetOrInitialize(DateTime.Now);
         var settings = settingsData.Load();
 
-        log.Stats[name] = 0;
-        settings.Weights[name] = weight;
+        var id = Guid.NewGuid();
+
+        var newStat = new StatDefinition
+        (
+            id,
+            name,
+            weight
+        );
+
+        log.DailyStats[id] = 0;
+        settings.Stats.Add(newStat);
 
         data.Save(log);
         settingsData.Save(settings);
     }
 
-    public IEnumerable<string> GetStatsList()
+    public IEnumerable<StatDefinition> GetStatsList()
     {
         var settings = settingsData.Load();
 
-        return settings.Weights.Keys;
+        return settings.Stats;
     }
 
-    public double GetWeight(string name)
+    public double GetWeight(Guid id)
     {
         var setting = settingsData.Load();
-        return setting.Weights[name];
+        return setting.Stats.Find(statDef => statDef.Id == id).Weight;
+    } 
+
+    public Guid GetId(string name)
+    {
+        var settings = settingsData.Load();
+        return settings.Stats.Find(statDef => statDef.Name == name).Id;
     }
 }

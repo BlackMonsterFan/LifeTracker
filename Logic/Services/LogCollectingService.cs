@@ -3,21 +3,21 @@ namespace LifeTracker.Services;
 
 public class LogCollectingService(IDataService data, ISettingsService settingsService) : ILogCollectingService
 {
-    public Dictionary<string, double> CalculateTotalValues()
+    public Dictionary<Guid, double> CalculateTotalValues()
     {
         var dailyLogs = data.LoadAll();
         var settings = settingsService.Load();
 
-        var totals = new Dictionary<string, double>();
+        var totals = new Dictionary<Guid, double>();
 
-        foreach (string key in settings.Weights.Keys)
+        foreach (Guid id in settings.Stats.Select(statDef => statDef.Id))
         {
-            totals[key] = 0;   
+            totals[id] = 0;   
         }
 
         foreach (var log in dailyLogs)
         {
-            foreach (var stat in log.Stats)
+            foreach (var stat in log.DailyStats)
             {
                 if (totals.ContainsKey(stat.Key))
                 {

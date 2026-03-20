@@ -1,4 +1,5 @@
 using LifeTracker.Abstractions;
+using LifeTracker.Services;
 
 namespace LifeTracker.Logic;
 
@@ -40,17 +41,21 @@ public class AppController(IInputService inputService, IStatsService statsServic
 
     public void AddStatValue()
     {
-        var statsList = statsService.GetStatsList();
+        var statsDefinitions = statsService.GetStatsList();
+        var statsList = statsDefinitions.Select(statDef => statDef.Name);
+
         var name = inputService.GetStatName(statsList, "Зробити запис в:");
 
         if (name != "Вихід")
         {
-            var weight = statsService.GetWeight(name);
+            var id = statsService.GetId(name);
+            var weight = statsService.GetWeight(id);
+
             string prompt = $"[bold orange1] Введіть кількість одиниць: [/] \n [dim] 1 = {weight}Xp: [/]";
 
             var amount = inputService.AskInt(prompt);
 
-            statsService.AddProgress(name, amount);
+            statsService.AddProgress(id, amount);
         }
 
         return;
@@ -58,17 +63,21 @@ public class AppController(IInputService inputService, IStatsService statsServic
 
     public void DeleteValueMenu()
     {
-        var statsList = statsService.GetStatsList();
+        var statsDefinitions = statsService.GetStatsList();
+        var statsList = statsDefinitions.Select(statDef => statDef.Name);
+
         var name = inputService.GetStatName(statsList, "Видалити з:");
 
         if (name != "Вихід")
         {
-            var weight = statsService.GetWeight(name);
+            var id = statsService.GetId(name);
+            var weight = statsService.GetWeight(id);
+
             string prompt = $"[bold orange1] Введіть кількість одиниць: [/] \n [dim] 1 = {weight}Xp: [/]";
 
             var amount = inputService.AskInt(prompt);
 
-            statsService.AddProgress(name, -amount);
+            statsService.AddProgress(id, -amount);
         }
 
         return;
@@ -104,22 +113,25 @@ public class AppController(IInputService inputService, IStatsService statsServic
 
     public void EditStat() 
     {
-        var statsList = statsService.GetStatsList();
+        var statsDefinitions = statsService.GetStatsList();
+        var statsList = statsDefinitions.Select(statDef => statDef.Name);
 
         string name = inputService.GetStatName(statsList, "Оберіть що відредагувати:");
 
         if (name != "Вихід")
         {   
+            var id = statsService.GetId(name);
             var (newName, weight) = inputService.GetNewStatDetails();
 
-            statsService.RenameStat(name, newName);
-            statsService.UpdateWeight(newName, weight);
+            statsService.RenameStat(id, newName);
+            statsService.UpdateWeight(id, weight);
         }
     }
 
     public void DeleteStat()
     {
-        var statsList = statsService.GetStatsList();
+        var statsDefinitions = statsService.GetStatsList();
+        var statsList = statsDefinitions.Select(statDef => statDef.Name);
 
         string name = inputService.GetStatName(statsList, "Оберіть що видалити:");
 
@@ -129,7 +141,8 @@ public class AppController(IInputService inputService, IStatsService statsServic
 
             if(confirm)
             {
-                statsService.RemoveStat(name);
+                var id = statsService.GetId(name);
+                statsService.RemoveStat(id);
             }
         }
     }

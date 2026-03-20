@@ -9,14 +9,15 @@ public class StatsPresentationService (ILogCollectingService aggerator, ISetting
         var totals = aggerator.CalculateTotalValues();
         var setting = settingsService.Load();
 
-        var statsInfo = new List<StatInfo>(setting.Weights.Count());
+        var statsInfo = new List<StatInfo>();
 
         foreach (var pair in totals)
         {
-            string name = pair.Key;
-            double value = pair.Value;
-
-            double weight = setting.Weights[name];
+            var id = pair.Key;
+            var value = pair.Value;
+            
+            var name = setting.Stats.Find(statDef => statDef.Id == id).Name;
+            var weight = setting.Stats.Find(statDef => statDef.Id == id).Weight;
 
             var Xp = levelUpSystem.CalculateXp(value, weight);
             var level = levelUpSystem.GetLevel(Xp);

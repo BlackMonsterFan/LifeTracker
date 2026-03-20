@@ -9,18 +9,22 @@ public class DailyLogProvider(IDataService data, ISettingsService settingsData) 
     public DailyLog GetOrInitialize(DateTime date)
     {
         string dateStr = date.ToString("yyyy-MM-dd");
-
         var existingLog = data.Load(dateStr);
 
         if (existingLog != null) return existingLog;
 
         var settings = settingsData.Load();
+        var DailyStats = new Dictionary<Guid, double>();
 
-        DailyLog newLog = new DailyLog {Date = date.Date};
+        var newLog = new DailyLog 
+        (
+            date.Date,
+            DailyStats
+        );
 
-        foreach (string key in settings.Weights.Keys)
+        foreach (Guid Id in settings.Stats.Select(s => s.Id))
         {
-            newLog.Stats[key] = 0;
+            DailyStats[Id] = 0;
         }
 
         data.Save(newLog);
