@@ -4,27 +4,55 @@ using LifeTracker.Models;
 using LifeTracker.Utils;
 namespace LifeTracker.Services;
 
-public class DataService : IDataService
+public class DataService(IUserNotifyer userNotifyer) : IDataService
 {
     public DailyLog? Load(string date)
     {
-        string fileName = Path.Combine(FileSystemConfig.LogsPath, $"{date}.json");
-
-        if (!File.Exists(fileName)) return null;
-
-        string json = File.ReadAllText(fileName);
-        return JsonSerializer.Deserialize<DailyLog>(json);
+        string filePath = Path.Combine(FileSystemConfig.LogsPath, $"{date}.json");
+        return LoadByPath(filePath);
     }
 
     public IEnumerable<DailyLog> LoadAll()
     {
-        string[] filePaths = Directory.GetFiles(FileSystemConfig.LogsPath);
+        string[] filePaths = Directory.GetFiles(FileSystemConfig.LogsPath, "*.json");
 
         if (filePaths.Length == 0) return Enumerable.Empty<DailyLog>();
 
-        return filePaths
-        .Select(file => JsonSerializer.Deserialize<DailyLog>(File.ReadAllText(file)))
-        .Where(log => log != null)!;
+        var logs = new List<DailyLog>();
+        
+        foreach (var path in filePaths)
+        {
+            var log = LoadByPath(path);
+
+            if (log != null) logs.Add(log);
+            
+        }
+
+        return logs.Where(log => log != null);
+    }
+
+    private DailyLog? LoadByPath(string path)
+    {
+        if (!File.Exists(path)) return null;
+
+        try
+        {
+            string json = File.ReadAllText(path);
+            return JsonSerializer.Deserialize<DailyLog>(json);
+        }
+        catch (JsonException)
+        {
+            string corruptedPath = path + ".corrupted";
+            File.Move(path, corruptedPath, overwrite: true);
+
+            userNotifyer.Error($"Failed to load {path}. Check it manually at: {FileSystemConfig.LogsPath}");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            userNotifyer.Error($"Failed to load {path}. Error: {ex}");
+            return null;
+        }
     }
 
     public void Save(DailyLog log)

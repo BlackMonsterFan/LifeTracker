@@ -7,9 +7,11 @@ using Microsoft.VisualBasic;
 // Checking if directory exists
 FileSystemConfig.EnsureDirectoriesCreated();
 
+var userNotifyer = new UserNotifyer();
+
 // Data services
 var settingService = new SettingsService();
-var dataService = new DataService();
+var dataService = new DataService(userNotifyer);
 var logCollectingService = new LogCollectingService(dataService, settingService);
 
 var levelUpSystem = new LevelUpSystem();
